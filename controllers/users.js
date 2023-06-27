@@ -41,7 +41,8 @@ const getUser = (req, res) => {
 const createUser = (req, res) => {
   const { name, avatar } = req.body;
 
-  User.create({ name, avatar })
+  user
+    .create({ name, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
