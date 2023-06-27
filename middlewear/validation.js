@@ -5,15 +5,11 @@ module.exports = (err, req, res, next) => {
     let serverStatus = errors.SERVER_ERROR;
     let message = "An error has occurred on the server.";
 
-    if (
-      err.name === "BadRequest" ||
-      err.name === "ValidationError" ||
-      err.name === "CastError"
-    ) {
+    if (err.name === "ValidationError" || err.name === "CastError") {
       serverStatus = errors.BAD_REQUEST;
       message = "Invalid data";
     } else if (err.name === "NotFound") {
-      serverStatus = errors.NOT_FOUND;
+      serverStatus = errors.DocumentNotFoundError;
       message = err.message || "Resource not found";
     }
 
