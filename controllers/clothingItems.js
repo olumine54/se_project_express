@@ -90,7 +90,7 @@ const likeItem = (req, res, next) => {
     )
     .orFail()
     .then((item) => res.status(200).send({ data: item }))
-    .catch((e) => {
+    .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
         res
           .status(BAD_REQUEST)
