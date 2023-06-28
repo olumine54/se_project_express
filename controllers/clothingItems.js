@@ -12,11 +12,9 @@ const createItem = (req, res) => {
   clothingItem
     .create({ name, weather, imageUrl })
     .then((item) => {
-      console.log(item);
       res.send({ data: item });
     })
     .catch((err) => {
-      console.error(err);
       if (err.name === "ValidationError" || err.name === "CastError") {
         res
           .status(BAD_REQUEST)
@@ -62,7 +60,6 @@ const getItems = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  console.log(itemId);
   clothingItem
     .findByIdAndDelete(itemId)
     .orFail()
@@ -81,7 +78,7 @@ const deleteItem = (req, res) => {
       }
     });
 };
-const likeItem = (req, res, next) => {
+const likeItem = (req, res) => {
   clothingItem
     .findByIdAndUpdate(
       req.params.itemId,
@@ -107,7 +104,7 @@ const likeItem = (req, res, next) => {
     });
 };
 
-const disLikeItem = (req, res, next) => {
+const disLikeItem = (req, res) => {
   clothingItem
     .findByIdAndUpdate(
       req.params.itemId,
