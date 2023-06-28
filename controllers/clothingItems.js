@@ -6,11 +6,11 @@ const {
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
-  const { name, weather, imageURL } = req.body;
+  const { name, weather, imageUrl } = req.body;
   // const { owner } = req.userId;
 
   clothingItem
-    .create({ name, weather, imageURL })
+    .create({ name, weather, imageUrl })
     .then((item) => {
       console.log(item);
       res.send({ data: item });
@@ -66,11 +66,11 @@ const deleteItem = (req, res) => {
   clothingItem
     .findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(204).send({ item }))
+    .then((item) => res.status(200).send({ item }))
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
         res.status(BAD_REQUEST).send({ message: "The id entered is invalid" });
-      } else if (err.name === DocumentNotFoundError) {
+      } else if (err.name === "DocumentNotFoundError") {
         res
           .status(DocumentNotFoundError)
           .send({ message: "The id entered was not found" });
@@ -84,7 +84,7 @@ const deleteItem = (req, res) => {
 const likeItem = (req, res, next) => {
   clothingItem
     .findByIdAndUpdate(
-      res.params.itemId,
+      req.params.itemId,
       { $addToSet: { likes: req.user._id } },
       { new: true }
     )
@@ -95,7 +95,7 @@ const likeItem = (req, res, next) => {
         res
           .status(BAD_REQUEST)
           .send({ message: "The data provided is invalid" });
-      } else if (err.name === DocumentNotFoundError) {
+      } else if (err.name === "DocumentNotFoundError") {
         res
           .status(DocumentNotFoundError)
           .send({ message: "The id entered was not found" });
@@ -110,7 +110,7 @@ const likeItem = (req, res, next) => {
 const disLikeItem = (req, res, next) => {
   clothingItem
     .findByIdAndUpdate(
-      res.params.itemId,
+      req.params.itemId,
       { $pull: { likes: req.user._id } },
       { new: true }
     )
@@ -121,7 +121,7 @@ const disLikeItem = (req, res, next) => {
         res
           .status(BAD_REQUEST)
           .send({ message: "The data provided is invalid" });
-      } else if (err.name === DocumentNotFoundError) {
+      } else if (err.name === "DocumentNotFoundError") {
         res
           .status(DocumentNotFoundError)
           .send({ message: "The id entered was not found" });

@@ -1,4 +1,4 @@
-const user = require("../models/user");
+const User = require("../models/user");
 const {
   BAD_REQUEST,
   DocumentNotFoundError,
@@ -26,7 +26,7 @@ const getUser = (req, res) => {
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
         res.status(BAD_REQUEST).send({ message: "The id entered is invalid" });
-      } else if (err.name === DocumentNotFoundError) {
+      } else if (err.statusCode === DocumentNotFoundError) {
         res
           .status(DocumentNotFoundError)
           .send({ message: "The id entered was not found" });
@@ -41,8 +41,7 @@ const getUser = (req, res) => {
 const createUser = (req, res) => {
   const { name, avatar } = req.body;
 
-  user
-    .create({ name, avatar })
+  User.create({ name, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
