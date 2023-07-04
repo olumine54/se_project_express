@@ -7,10 +7,10 @@ const {
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
-  // const { owner } = req.userId;
+  const { owner } = req.user._Id;
 
   clothingItem
-    .create({ name, weather, imageUrl })
+    .create({ name, weather, imageUrl, owner })
     .then((item) => {
       res.send({ data: item });
     })
@@ -36,27 +36,6 @@ const getItems = (req, res) => {
         .send({ message: "An error has occurred on the server" });
     });
 };
-
-// const updateItem = (req, res) => {
-//   const { itemId } = req.params;
-//   const { imageURL } = req.body;
-
-//   clothingItem
-//     .findByIdAndUpdate(itemId, { $set: { imageURL } })
-//     .orFail()
-//     .then((item) => res.status(200).send({ data: item }))
-//     .catch((err) => {
-//       if (err.name === "ValidationError" || err.name === "CastError") {
-//         res.status(BAD_REQUEST).send({ message: "The id entered is invalid" });
-//       } else if (err.name === DocumentNotFoundError) {
-//         res.status(DocumentNotFoundError).send({ message: "The id entered was not found" });
-//       } else {
-//         res
-//           .status(SERVER_ERROR)
-//           .send({ message: "An error has occurred on the server" });
-//       }
-//     });
-// };
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;

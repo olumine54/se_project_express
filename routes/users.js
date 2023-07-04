@@ -1,9 +1,8 @@
 const router = require("express").Router();
+const auth = require("../middlewear/auth");
 
-const { createUser, getUsers, getUser } = require("../controllers/users");
+const { getCurrentUser, updateItem } = require("../controllers/users");
 
-router.post("/", createUser);
-router.get("/", getUsers);
-router.get("/:userId", getUser);
-
+router.get("/me", auth, getCurrentUser);
+router.patch("/me", auth, updateItem);
 module.exports = router;
