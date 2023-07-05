@@ -13,7 +13,7 @@ const {
 router.post("/", auth, createItem);
 
 // Read
-router.get("/", auth, getItems);
+router.get("/", getItems);
 
 // Delete
 router.delete("/:itemId", auth, deleteItem);

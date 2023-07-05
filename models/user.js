@@ -27,14 +27,13 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     validator: {
-      validator: (V) => validator.isEmail(v),
+      validator: (V) => validator.isEmail(V),
       message: "email is not valid",
     },
   },
   password: {
     type: String,
     required: true,
-    minlength: 8,
     select: false,
   },
 });
@@ -48,7 +47,7 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(
       if (!user) {
         return Promise.reject(new Error("Incorrect email or password"));
       }
-      console.log(password, user);
+
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
           return Promise.reject(new Error("Incorrect email or password"));
