@@ -137,6 +137,7 @@ const login = (req, res) => {
       res.send({ token });
     })
     .catch((err) => {
+      console.log(err);
       res.status(UNAUTHORIZED).send({ message: err.message });
     });
 };
