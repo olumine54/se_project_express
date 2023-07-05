@@ -98,7 +98,6 @@ const createUser = (req, res) => {
   bcrypt
     .hash(password, 10)
     .then((hash) => {
-      console.log("error I want to see");
       return User.create({
         name,
         avatar,
@@ -114,13 +113,11 @@ const createUser = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      console.log("is catch running");
       if (err.code === 11000) {
         res
           .status(DUPLICATE_ERROR)
           .send({ message: "duplicate error the user already exist" });
       } else {
-        console.log("what else?");
         res
           .status(SERVER_ERROR)
           .send({ message: "An error has occurred on the server" });
