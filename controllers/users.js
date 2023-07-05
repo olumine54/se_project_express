@@ -1,11 +1,13 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { jwtSecret } = require("../utils/config");
 const {
   BAD_REQUEST,
   DocumentNotFoundError,
   SERVER_ERROR,
   UNAUTHORIZED,
+  DUPLICATE_ERROR,
 } = require("../utils/errors");
 
 const getCurrentUser = (req, res) => {
@@ -32,11 +34,14 @@ const getCurrentUser = (req, res) => {
 };
 
 const updateItem = (req, res) => {
-  const { itemId } = req.params;
-  const { imageURL } = req.body;
+  const { name, avatar } = req.body;
 
   clothingItem
-    .findByIdAndUpdate(itemId, { $set: { imageURL } })
+    .findByIdAndUpdate(
+      req.user._id,
+      { name, avatar },
+      { new: true, runValidators: true }
+    )
     .orFail()
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
@@ -90,24 +95,35 @@ const getUser = (req, res) => {
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
-  User.create({ name, avatar, email, password });
   bcrypt
-    .hash(req.body.password, 10)
-    .then((hash) =>
-      User.create({
+    .hash(password, 10)
+    .then((hash) => {
+      console.log("error I want to see");
+      return User.create({
+        name,
+        avatar,
         email: req.body.email,
         password: hash, //
-      })
-    )
-    .then((user) => res.send({ data: user }))
+      }).then((user) =>
+        res.send({ name, avatar, email, password, _id: user._id })
+      );
+    })
+
+    .then((user) => {
+      console.log("test1236");
+      res.send({ data: user });
+    })
     .catch((err) => {
-      if (err.statusCode === 11000) {
-        throw new Error("Duplicate key error: The user already exists.");
+      console.log("is catch running");
+      if (err.code === 11000) {
+        res
+          .status(DUPLICATE_ERROR)
+          .send({ message: "duplicate error the user already exist" });
       } else {
+        console.log("what else?");
         res
           .status(SERVER_ERROR)
           .send({ message: "An error has occurred on the server" });
-        throw error;
       }
     });
 };
@@ -117,7 +133,7 @@ const login = (req, res) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+      const token = jwt.sign({ _id: user._id }, jwtSecret, {
         expiresIn: "7d",
       });
 

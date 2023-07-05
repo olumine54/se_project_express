@@ -20,12 +20,13 @@ const routes = require("./routes");
 //   next();
 // });
 
-app.post("/signin", login);
-app.post("/signup", createUser);
-app.use(auth);
 app.use(cors());
 app.use(express.json());
 app.use(helmet());
+app.post("/signin", login);
+app.post("/signup", createUser);
+app.use(auth);
+
 app.use(routes);
 
 app.listen(PORT, () => {});
