@@ -8,7 +8,7 @@ const {
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
-  const { owner } = req.user._id;
+  const owner = req.user._id;
 
   clothingItem
     .create({ name, weather, imageUrl, owner })
@@ -42,18 +42,17 @@ const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
   clothingItem
     .findById(itemId)
-    .orFail(() => {
-      res.status(DocumentNotFoundError).send("item id provided does not exist");
-    })
+    .orFail()
+
     .then((item) => {
-      if (String(item.owner) !== owner) {
-        // who is an owner?
+      if (String(item.owner) !== req.user._id) {
         return next(
           res
             .status(FORBIDDEN)
-            .send(
-              "You do not have the appropriate permissions to delete this item"
-            )
+            .send({
+              message:
+                "You do not have the appropriate permissions to delete this item",
+            })
         );
       }
       return item.deleteOne().then(() => res.send({ data: item }));

@@ -7,10 +7,11 @@ const {
   DocumentNotFoundError,
   SERVER_ERROR,
   UNAUTHORIZED,
+  DUPLICATE_ERROR,
 } = require("../utils/errors");
 
 const getCurrentUser = (req, res) => {
-  const { _id } = req.user._id;
+  const { _id } = req.user;
 
   User.findById(_id)
     .orFail()
@@ -107,7 +108,11 @@ const createUser = (req, res) => {
     )
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(BAD_REQUEST).send({ message: " the user already exist" });
+        res.status(BAD_REQUEST).send({ message: " Invalid data" });
+      } else if (err.code === 11000) {
+        res
+          .status(DUPLICATE_ERROR)
+          .send({ message: "duplicate error the user already exist" });
       } else {
         res
           .status(SERVER_ERROR)
