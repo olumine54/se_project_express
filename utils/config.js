@@ -1,6 +1,4 @@
-const crypto = require("crypto");
-
-const jwtSecret = crypto.randomBytes(32).toString("hex");
+const jwtSecret = process.env.JWT_SECRET || "dev-secret";
 
 module.exports = {
   jwtSecret,

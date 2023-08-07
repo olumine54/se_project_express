@@ -107,6 +107,7 @@ const createUser = (req, res) => {
       )
     )
     .catch((err) => {
+      console.error(err);
       if (err.name === "ValidationError") {
         res.status(BAD_REQUEST).send({ message: " Invalid data" });
       } else if (err.code === 11000) {

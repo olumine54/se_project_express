@@ -15,6 +15,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
+    console.log(jwtSecret);
     payload = jwt.verify(token, jwtSecret);
   } catch (err) {
     return res

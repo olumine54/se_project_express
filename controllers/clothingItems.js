@@ -16,6 +16,7 @@ const createItem = (req, res) => {
       res.send({ data: item });
     })
     .catch((err) => {
+      console.error(err);
       if (err.name === "ValidationError" || err.name === "CastError") {
         res
           .status(BAD_REQUEST)
@@ -47,12 +48,10 @@ const deleteItem = (req, res, next) => {
     .then((item) => {
       if (String(item.owner) !== req.user._id) {
         return next(
-          res
-            .status(FORBIDDEN)
-            .send({
-              message:
-                "You do not have the appropriate permissions to delete this item",
-            })
+          res.status(FORBIDDEN).send({
+            message:
+              "You do not have the appropriate permissions to delete this item",
+          })
         );
       }
       return item.deleteOne().then(() => res.send({ data: item }));
