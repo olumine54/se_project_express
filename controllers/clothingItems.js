@@ -1,12 +1,9 @@
 const clothingItem = require("../models/clothingItem");
-const {
-  BAD_REQUEST,
-  DocumentNotFoundError,
-  SERVER_ERROR,
-  FORBIDDEN,
-} = require("../utils/errors");
+const { BadRequestError } = require("../errors/bad-request-err");
+const { NotFoundError } = require("../errors/not-found-err");
+const { ForBiddenError } = require("../errors/forbidden-err");
 
-const createItem = (req, res) => {
+const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
@@ -18,13 +15,9 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError" || err.name === "CastError") {
-        res
-          .status(BAD_REQUEST)
-          .send({ message: "The data provided is invalid" });
+        next(new BadRequestError("The data provided is invalid"));
       } else {
-        res
-          .status(SERVER_ERROR)
-          .send({ message: "An error has occurred on the server" });
+        next(err);
       }
     });
 };
@@ -33,9 +26,7 @@ const getItems = (req, res) => {
     .find({})
     .then((items) => res.status(200).send(items))
     .catch(() => {
-      res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      next(err);
     });
 };
 // <---
@@ -48,25 +39,22 @@ const deleteItem = (req, res, next) => {
     .then((item) => {
       if (String(item.owner) !== req.user._id) {
         return next(
-          res.status(FORBIDDEN).send({
-            message:
-              "You do not have the appropriate permissions to delete this item",
-          })
+          next(
+            new ForBiddenError(
+              "You do not have the appropriate permissions to delete this item"
+            )
+          )
         );
       }
       return item.deleteOne().then(() => res.send({ data: item }));
     })
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(BAD_REQUEST).send({ message: "The id entered is invalid" });
+        next(new BadRequestError("The data provided is invalid"));
       } else if (err.name === "DocumentNotFoundError") {
-        res
-          .status(DocumentNotFoundError)
-          .send({ message: "The id entered was not found" });
+        next(new NotFoundError("The id entered was not found"));
       } else {
-        res
-          .status(SERVER_ERROR)
-          .send({ message: "An error has occurred on the server" });
+        next(err);
       }
     });
 };
@@ -81,17 +69,11 @@ const likeItem = (req, res) => {
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        res
-          .status(BAD_REQUEST)
-          .send({ message: "The data provided is invalid" });
+        next(new BadRequestError("The data provided is invalid"));
       } else if (err.name === "DocumentNotFoundError") {
-        res
-          .status(DocumentNotFoundError)
-          .send({ message: "The id entered was not found" });
+        next(new NotFoundError("The id entered was not found"));
       } else {
-        res
-          .status(SERVER_ERROR)
-          .send({ message: "An error has occurred on the server" });
+        next(err);
       }
     });
 };
@@ -107,17 +89,11 @@ const disLikeItem = (req, res) => {
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        res
-          .status(BAD_REQUEST)
-          .send({ message: "The data provided is invalid" });
+        next(new BadRequestError("The data provided is invalid"));
       } else if (err.name === "DocumentNotFoundError") {
-        res
-          .status(DocumentNotFoundError)
-          .send({ message: "The id entered was not found" });
+        next(new NotFoundError("The id entered was not found"));
       } else {
-        res
-          .status(SERVER_ERROR)
-          .send({ message: "An error has occurred on the server" });
+        next(err);
       }
     });
 };
