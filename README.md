@@ -16,4 +16,4 @@ The controller is create for storing files with functions that definr the routes
 
 `npm run dev` — to launch the server with the hot reload feature
 
-www.selfip.tk.com
+www.selfip.tk
