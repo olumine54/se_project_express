@@ -1,7 +1,7 @@
 const clothingItem = require("../models/clothingItem");
-const { BadRequestError } = require("../errors/bad-request-err");
-const { NotFoundError } = require("../errors/not-found-err");
-const { ForBiddenError } = require("../errors/forbidden-err");
+const BadRequestError = require("../errors/bad-request-err");
+const NotFoundError = require("../errors/not-found-err");
+const ForBiddenError = require("../errors/forbidden-err");
 
 const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
@@ -13,7 +13,6 @@ const createItem = (req, res, next) => {
       res.send({ data: item });
     })
     .catch((err) => {
-      console.error(err);
       if (err.name === "ValidationError" || err.name === "CastError") {
         next(new BadRequestError("The data provided is invalid"));
       } else {
@@ -21,11 +20,11 @@ const createItem = (req, res, next) => {
       }
     });
 };
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   clothingItem
     .find({})
     .then((items) => res.status(200).send(items))
-    .catch(() => {
+    .catch((err) => {
       next(err);
     });
 };
@@ -58,7 +57,7 @@ const deleteItem = (req, res, next) => {
       }
     });
 };
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   clothingItem
     .findByIdAndUpdate(
       req.params.itemId,
@@ -78,7 +77,7 @@ const likeItem = (req, res) => {
     });
 };
 
-const disLikeItem = (req, res) => {
+const disLikeItem = (req, res, next) => {
   clothingItem
     .findByIdAndUpdate(
       req.params.itemId,
