@@ -4,8 +4,8 @@ const { jwtSecret } = require("../utils/config");
 const User = require("../models/user");
 const BadRequestError = require("../errors/bad-request-err");
 const NotFoundError = require("../errors/not-found-err");
-const ConflictError = require("../errors/forbidden-err");
-const UnauthorizedError = require("../errors/forbidden-err");
+const ConflictError = require("../errors/conflict-err");
+const UnauthorizedError = require("../errors/unauthorized-err");
 
 const getCurrentUser = (req, res, next) => {
   const { _id } = req.user;
