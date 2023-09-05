@@ -13,25 +13,25 @@ const { validateUserInfo, validateLogIn } = require("./middlewear/validation");
 
 const { PORT = 3001 } = process.env;
 const app = express();
+const routes = require("./routes");
 
 mongoose.connect("mongodb://127.0.0.1:27017/wtwr_db");
 
-const routes = require("./routes");
-
 app.use(helmet());
+
+app.use(requestLogger);
 
 app.get("/crash-test", () => {
   setTimeout(() => {
     throw new Error("Server will crash now");
   }, 0);
 });
-app.post("/signin", validateUserInfo, login);
-app.post("/signup", validateLogIn, createUser);
+app.post("/signin", validateLogIn, login);
+app.post("/signup", validateUserInfo, createUser);
 
 app.use(cors());
 app.use(express.json());
 
-app.use(requestLogger);
 app.use(routes);
 
 app.use(errorLogger);
