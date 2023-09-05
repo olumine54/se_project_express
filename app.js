@@ -26,11 +26,12 @@ app.get("/crash-test", () => {
     throw new Error("Server will crash now");
   }, 0);
 });
-app.post("/signin", validateLogIn, login);
-app.post("/signup", validateUserInfo, createUser);
 
 app.use(cors());
 app.use(express.json());
+
+app.post("/signin", validateLogIn, login);
+app.post("/signup", validateUserInfo, createUser);
 
 app.use(routes);
 

@@ -55,7 +55,7 @@ const createUser = (req, res, next) => {
         name,
         avatar,
         email: req.body.email,
-        password: hash, //
+        password: hash,
       }).then((user) => res.send({ name, avatar, email, _id: user._id }))
     )
     .catch((err) => {
